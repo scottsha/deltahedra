@@ -1,6 +1,7 @@
 import pyvista as pv
 import numpy as np
 
+
 def make_rot(point: np.ndarray, axis: np.ndarray) -> np.ndarray:
     shift = np.identity(4)
     shift[0, 3] = point[0]
@@ -15,11 +16,23 @@ def make_rot(point: np.ndarray, axis: np.ndarray) -> np.ndarray:
     return shift @ rot @ back_shift
 
 
-
 icos = pv.Icosahedron()
+
+
+def make_pent_flip(link_vert: int) -> np.ndarray:
+    r_dir = icos.points[link_vert, :]
+    r_dir = r_dir / np.linalg.norm(r_dir)
+    flip_link = icos.point_neighbors(link_vert)
+    r_center = icos.points[flip_link, :].mean(axis=0)
+    rr = make_rot(r_center, r_dir)
+    return rr
+
+
 x = icos.points[:, 0]
 y = icos.points[:, 1]
 icos.point_data["og"] = np.square(x - 0.2) - y
+icos.point_data["id"] = np.array(range(12))
+
 
 r0 = np.identity(4)
 r0[0, 0] = -1.0
@@ -39,18 +52,9 @@ r1 = np.array([
 r2 = np.identity(4)
 r2[1, 1] = -1.0
 
-# r3_dir = np.array([1.0, 0.0, 0.0])
-flip_vert = 3
-r3_dir = icos.points[flip_vert, :]
-r3_dir = r3_dir / np.linalg.norm(r3_dir)
-# r3_center = np.array([1.0, 0.0, 0.0])
+r3 = make_pent_flip(0)
 
-flip_link = icos.point_neighbors(flip_vert)
-r3_center = icos.points[flip_link, :].mean(axis=0)
-
-r3 = make_rot(r3_center, r3_dir)
-print(r3)
-
+r5 =
 
 tri_flip_face = 0
 r4_dir = icos.face_normals[tri_flip_face, :]
@@ -60,12 +64,14 @@ r4_center = icos.points[face_0, :].mean(axis=0)
 r4 = make_rot(r4_center, r4_dir)
 print(r4)
 
-# icos.save("icos.vtp")
-# icos.transform(r0, inplace=False).save("icos_r0.vtp")
-# icos.transform(r1, inplace=False).save("icos_r1.vtp")
-# icos.transform(r2, inplace=False).save("icos_r2.vtp")
-# icos.transform(r3, inplace=False).save("icos_r3.vtp")
-# icos.transform(r4, inplace=False).save("icos_r4.vtp")
+
+
+icos.save("icos.vtp")
+icos.transform(r0, inplace=False).save("icos_r0.vtp")
+icos.transform(r1, inplace=False).save("icos_r1.vtp")
+icos.transform(r2, inplace=False).save("icos_r2.vtp")
+icos.transform(r3, inplace=False).save("icos_r3.vtp")
+icos.transform(r4, inplace=False).save("icos_r4.vtp")
 
 
 r0_dir = np.array([1.0, 0.0, 0.0])
