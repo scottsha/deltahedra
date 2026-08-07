@@ -23,6 +23,7 @@ phi = (1 + sp.sqrt(5)) / 2
 # Radius of the (0, 1, phi) vertices
 rr_sq = 1 + phi ** 2
 rr = sp.sqrt(rr_sq)
+edge_length =
 raw_vertices = sp.Matrix([
     [0, 1, -rr],
     [0, 1, rr],
